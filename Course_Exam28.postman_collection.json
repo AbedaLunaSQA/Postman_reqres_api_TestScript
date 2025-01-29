@@ -1,0 +1,418 @@
+{
+	"info": {
+		"_postman_id": "436a297a-696e-43bd-90c7-bd21ec28f9d3",
+		"name": "Course_Exam28",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "32584463"
+	},
+	"item": [
+		{
+			"name": "GetUsers",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"var jsondata = pm.response.json()\r",
+							"\r",
+							"//Status code check\r",
+							"pm.test(\"Status code is 200\", function(){\r",
+							"pm.response.to.have.status(200);\r",
+							"\r",
+							"});\r",
+							"\r",
+							"//page value validation\r",
+							"pm.test(\"Page value is 2\", function(){\r",
+							"pm.expect(jsondata.page).to.eql(2);\r",
+							"\r",
+							"});\r",
+							"\r",
+							"//id, email,firstName, lastName, avatar presence validation\r",
+							"pm.test(\"All user have an ID\",function(){\r",
+							"    console.log(jsondata.data.length);\r",
+							"\r",
+							"\r",
+							"pm.test(\"All users have an 'id' field\", function() {\r",
+							"    let allHaveId = jsondata.data.every(user => user.id !== undefined); \r",
+							"    pm.expect(allHaveId).to.be.true; \r",
+							"    console.log(allHaveId);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"All users have an 'email' field\", function() {\r",
+							"    let allHaveEmail = jsondata.data.every(user => user.email !== undefined); \r",
+							"    pm.expect(allHaveEmail).to.be.true; \r",
+							"    console.log(allHaveEmail);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"All users have an 'first_name' field\", function() {\r",
+							"    let allHaveFirstName = jsondata.data.every(user => user.first_name !== undefined); \r",
+							"    pm.expect(allHaveFirstName).to.be.true; \r",
+							"    console.log(allHaveFirstName);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"All users have an 'last_name' field\", function() {\r",
+							"    let allHaveLastName = jsondata.data.every(user => user.last_name !== undefined); \r",
+							"    pm.expect(allHaveLastName).to.be.true; \r",
+							"    console.log(allHaveLastName);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"All users have an 'avatar' field\", function() {\r",
+							"    let allHaveAvatar = jsondata.data.every(user => user.avatar !== undefined); \r",
+							"    pm.expect(allHaveAvatar).to.be.true; \r",
+							"    console.log(allHaveAvatar);\r",
+							"});\r",
+							"\r",
+							"// for(i=0; i<jsondata.data.length; i++){\r",
+							"//    var ids = console.log(jsondata.data[i].id)\r",
+							"\r",
+							"// if(ids == jsondata.data.length){\r",
+							"//     console.log(\"All user have an ID\")\r",
+							"// }\r",
+							"//     else{\r",
+							"//         console.log(\"Some user's ID missing\")\r",
+							"//     }\r",
+							"\r",
+							"\r",
+							"\r",
+							"})\r",
+							"\r",
+							"\r",
+							"\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{BaseUrl}}/api/users?page=2",
+					"host": [
+						"{{BaseUrl}}"
+					],
+					"path": [
+						"api",
+						"users"
+					],
+					"query": [
+						{
+							"key": "page",
+							"value": "2"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Create User",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"var jsondata = pm.response.json();\r",
+							"pm.environment.set(\"ID\",jsondata.id);\r",
+							"\r",
+							"//Status code check\r",
+							"pm.test(\"Status code is 201\", function () {\r",
+							"    pm.response.to.have.status(201);\r",
+							"});\r",
+							"\r",
+							"//name and job validation\r",
+							"pm.test(\"Payload and response have same name\", function(){\r",
+							"pm.expect(jsondata.name).to.eql(pm.environment.get(\"FullName\"));\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Payload and response have same job\", function(){\r",
+							"pm.expect(jsondata.job).to.eql(pm.environment.get(\"Job\"));\r",
+							"});\r",
+							"\r",
+							"//Check presence of id and createdAt in response\r",
+							"pm.test(\"Check for presence of id in response\", function(){\r",
+							"pm.expect(jsondata).to.have.property(\"id\");\r",
+							"pm.expect(jsondata).to.have.property(\"createdAt\");\r",
+							"}\r",
+							")"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"var fullname = pm.variables.replaceIn(\"{{$randomFullName}}\")\r",
+							"console.log(fullname);\r",
+							"pm.environment.set(\"FullName\", fullname);\r",
+							"\r",
+							"var job = pm.variables.replaceIn(\"{{$randomJobTitle}}\")\r",
+							"console.log(job);\r",
+							"pm.environment.set(\"Job\", job);"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"name\": \"{{FullName}}\",\r\n    \"job\": \"{{Job}}\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{BaseUrl}}/api/users",
+					"host": [
+						"{{BaseUrl}}"
+					],
+					"path": [
+						"api",
+						"users"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get User by ID",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"var jsondata = pm.response.json()\r",
+							"\r",
+							"//Status code check\r",
+							"pm.test(\"Status code is 200\", function(){\r",
+							"pm.response.to.have.status(200);\r",
+							"\r",
+							"});\r",
+							"\r",
+							"//id, email,firstName, lastName, avatar presence validation\r",
+							"pm.test(\"ID is numeric and not negative\", function(){\r",
+							"    pm.expect(jsondata.data.id).to.be.a('number').that.is.above(0);\r",
+							"})\r",
+							"\r",
+							"pm.test(\"email has valid format\", function(){\r",
+							"    pm.expect(jsondata.data.email).to.include('@');\r",
+							"pm.expect(jsondata.data.email).to.include('.');\r",
+							"})\r",
+							"\r",
+							"//FirstName validation\r",
+							"pm.test(\"First name validation\", function(){\r",
+							"    pm.expect(jsondata.data.first_name).to.be.a('string').that.is.not.empty;\r",
+							"})\r",
+							"\r",
+							"//LastName validation\r",
+							"pm.test(\"Last name validation\", function(){\r",
+							"    pm.expect(jsondata.data.last_name).to.be.a('string').that.is.not.empty;\r",
+							"})\r",
+							"\r",
+							"//Avatar validation\r",
+							"pm.test(\"Avatar validation\", function(){\r",
+							"    pm.expect(jsondata.data.avatar).to.be.a('string').that.includes('https');\r",
+							"    pm.expect(jsondata.data.avatar).to.be.a('string').that.includes('.jpg');\r",
+							"})\r",
+							"\r",
+							"//Validation of Url field in support\r",
+							"pm.test(\"Url validation\", function(){\r",
+							"    pm.expect(jsondata.data.avatar).to.be.a('string').that.includes('https');\r",
+							"})\r",
+							"\r",
+							"\r",
+							"//Validation of text field in support\r",
+							"pm.test(\"Text field validation\", function(){\r",
+							"    pm.expect(jsondata.support.text).to.be.a(\"string\").that.is.not.empty;\r",
+							"})\r",
+							"\r",
+							"\r",
+							"\r",
+							"\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{BaseUrl}}/api/users/2",
+					"host": [
+						"{{BaseUrl}}"
+					],
+					"path": [
+						"api",
+						"users",
+						"2"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Update User",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"var jsondata = pm.response.json();\r",
+							"\r",
+							"//Check status code\r",
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"//name and job validation\r",
+							"pm.test(\"Payload and response have same name\", function(){\r",
+							"pm.expect(jsondata.name).to.eql(\"Jane Doe\");\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Payload and response have same job\", function(){\r",
+							"pm.expect(jsondata.job).to.eql(\"Product Manager\");\r",
+							"});\r",
+							"\r",
+							"//Check presence of updatedAt in response\r",
+							"pm.test(\"Check for presence of updatedAt in response\", function(){\r",
+							"pm.expect(jsondata).to.have.property(\"updatedAt\");\r",
+							"\r",
+							"}\r",
+							")\r",
+							"\r",
+							"\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"name\": \"Jane Doe\",\r\n    \"job\": \"Product Manager\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{BaseUrl}}/api/users/{{ID}}",
+					"host": [
+						"{{BaseUrl}}"
+					],
+					"path": [
+						"api",
+						"users",
+						"{{ID}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Delete User",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"//var jsonData = pm.response.json();\r",
+							"//Check status code\r",
+							"pm.test(\"Status code is 204\", function () {\r",
+							"    pm.response.to.have.status(204);\r",
+							"});\r",
+							"\r",
+							"//Check for blank response\r",
+							"\r",
+							"pm.test(\"Response is empty\", function(){\r",
+							"    pm.expect(pm.response.body).to.be.oneOf([undefined, \"\", \"{}\", \"[]\"]);\r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "{{BaseUrl}}/api/users/{{ID}}",
+					"host": [
+						"{{BaseUrl}}"
+					],
+					"path": [
+						"api",
+						"users",
+						"{{ID}}"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		}
+	]
+}
